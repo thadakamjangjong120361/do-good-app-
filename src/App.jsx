@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { Check, Gift, ShoppingBag } from 'lucide-react';
+import { Check, Gift } from 'lucide-react';
 
 const supabase = createClient(
   'https://bwqcofvnzphstcgjtyee.supabase.co',
@@ -8,9 +8,7 @@ const supabase = createClient(
 );
 
 const STRIPE_LINKS = {
-  'Yoga Kurs': 'https://buy.stripe.com/test_xxx',
-  'Pro Coaching': 'https://buy.stripe.com/test_xxx',
-  'Meditation App': 'https://buy.stripe.com/test_xxx'
+  'PassionFruit & Coconut': 'https://buy.stripe.com/00w6oG6PJ685akq6Pj9Zm05'
 };
 
 export default function App() {
@@ -82,10 +80,8 @@ export default function App() {
     }
     await saveCustomer();
     const link = STRIPE_LINKS[product.name];
-    if (link && link !== 'https://buy.stripe.com/test_xxx') {
+    if (link) {
       window.location.href = link + '?prefilled_email=' + encodeURIComponent(email);
-    } else {
-      alert('Zahlung wird bald verfügbar sein!');
     }
   };
 
@@ -112,57 +108,33 @@ export default function App() {
 
   return (
     <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#f59e0b,#f97316)',padding:'1rem'}}>
-      <div style={{maxWidth:'24rem',margin:'0 auto'}}>
+      <div style={{maxWidth:'22rem',margin:'0 auto'}}>
         <div style={{textAlign:'center',color:'white',marginBottom:'1rem'}}>
           <Gift style={{width:'2rem',height:'2rem',margin:'0 auto'}}/>
           <h1 style={{fontSize:'1.5rem',fontWeight:'bold',margin:'0.5rem 0'}}>Do Good 🎁</h1>
-          <p style={{opacity:0.9,fontSize:'0.9rem'}}>Gratis & Premium Produkte</p>
         </div>
 
-        <div style={{background:'white',borderRadius:'1.5rem',padding:'1.25rem',marginBottom:'1rem'}}>
-          <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.75rem'}}>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="📱 Telefon"
-              style={{flex:1,padding:'0.7rem',border:'2px solid #eee',borderRadius:'0.75rem',fontSize:'0.9rem',boxSizing:'border-box'}}
-            />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="✉️ Email"
-              style={{flex:1,padding:'0.7rem',border:'2px solid #eee',borderRadius:'0.75rem',fontSize:'0.9rem',boxSizing:'border-box'}}
-            />
+        <div style={{background:'white',borderRadius:'1.5rem',padding:'1rem',marginBottom:'0.75rem'}}>
+          <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}>
+            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="📱 Telefon"
+              style={{flex:1,padding:'0.6rem',border:'2px solid #eee',borderRadius:'0.75rem',fontSize:'0.85rem',boxSizing:'border-box'}}/>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="✉️ Email"
+              style={{flex:1,padding:'0.6rem',border:'2px solid #eee',borderRadius:'0.75rem',fontSize:'0.85rem',boxSizing:'border-box'}}/>
           </div>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="📍 Strasse Nr, PLZ Ort"
-            style={{width:'100%',padding:'0.7rem',border:'2px solid #eee',borderRadius:'0.75rem',fontSize:'0.9rem',boxSizing:'border-box'}}
-          />
+          <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="📍 Strasse, PLZ Ort"
+            style={{width:'100%',padding:'0.6rem',border:'2px solid #eee',borderRadius:'0.75rem',fontSize:'0.85rem',boxSizing:'border-box'}}/>
         </div>
 
         {freeProducts.length > 0 && (
-          <div style={{background:'white',borderRadius:'1.5rem',padding:'1.25rem',marginBottom:'1rem'}}>
-            <h2 style={{fontSize:'1rem',fontWeight:'bold',marginBottom:'0.75rem',color:'#22c55e'}}>🆓 GRATIS</h2>
-            <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap'}}>
+          <div style={{background:'white',borderRadius:'1.5rem',padding:'1rem',marginBottom:'0.75rem'}}>
+            <p style={{fontSize:'0.8rem',fontWeight:'bold',color:'#22c55e',marginBottom:'0.5rem'}}>🆓 GRATIS</p>
+            <div style={{display:'flex',gap:'0.5rem'}}>
               {freeProducts.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => handleFreeOrder(p)}
-                  disabled={loading}
-                  style={{
-                    flex:'1 1 45%',padding:'0.75rem',border:'2px solid #22c55e',
-                    borderRadius:'1rem',background:'#f0fdf4',cursor:'pointer',
-                    display:'flex',flexDirection:'column',alignItems:'center',gap:'0.25rem'
-                  }}
-                >
-                  <span style={{fontSize:'2rem'}}>{p.emoji}</span>
-                  <span style={{fontSize:'0.8rem',fontWeight:'600'}}>{p.name}</span>
-                  <span style={{fontSize:'0.75rem',color:'#22c55e',fontWeight:'bold'}}>GRATIS ✓</span>
+                <button key={p.id} onClick={() => handleFreeOrder(p)} disabled={loading}
+                  style={{flex:1,padding:'0.6rem',border:'2px solid #22c55e',borderRadius:'0.75rem',background:'#f0fdf4',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:'0.2rem'}}>
+                  <span style={{fontSize:'1.75rem'}}>{p.emoji}</span>
+                  <span style={{fontSize:'0.7rem',fontWeight:'600'}}>{p.name.split(' ')[1] || p.name}</span>
+                  <span style={{fontSize:'0.65rem',color:'#22c55e',fontWeight:'bold'}}>GRATIS</span>
                 </button>
               ))}
             </div>
@@ -170,35 +142,23 @@ export default function App() {
         )}
 
         {paidProducts.length > 0 && (
-          <div style={{background:'white',borderRadius:'1.5rem',padding:'1.25rem'}}>
-            <h2 style={{fontSize:'1rem',fontWeight:'bold',marginBottom:'0.75rem',color:'#f59e0b'}}>⭐ PREMIUM</h2>
-            <div style={{display:'flex',flexDirection:'column',gap:'0.5rem'}}>
-              {paidProducts.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => handlePaidOrder(p)}
-                  style={{
-                    width:'100%',padding:'0.75rem',border:'2px solid #f59e0b',
-                    borderRadius:'1rem',background:'#fffbeb',cursor:'pointer',
-                    display:'flex',alignItems:'center',gap:'0.75rem'
-                  }}
-                >
-                  <span style={{fontSize:'1.75rem'}}>{p.emoji}</span>
-                  <div style={{flex:1,textAlign:'left'}}>
-                    <p style={{fontWeight:'600',fontSize:'0.9rem'}}>{p.name}</p>
-                    <p style={{fontSize:'0.75rem',color:'#666'}}>{p.description}</p>
-                  </div>
-                  <div style={{background:'linear-gradient(135deg,#f59e0b,#f97316)',color:'white',padding:'0.4rem 0.75rem',borderRadius:'0.5rem',fontWeight:'bold',fontSize:'0.85rem'}}>
-                    CHF {p.price}
-                  </div>
-                </button>
-              ))}
-            </div>
+          <div style={{background:'white',borderRadius:'1.5rem',padding:'1rem'}}>
+            <p style={{fontSize:'0.8rem',fontWeight:'bold',color:'#f59e0b',marginBottom:'0.5rem'}}>⭐ PREMIUM</p>
+            {paidProducts.map(p => (
+              <button key={p.id} onClick={() => handlePaidOrder(p)}
+                style={{width:'100%',padding:'0.6rem',border:'2px solid #f59e0b',borderRadius:'0.75rem',background:'#fffbeb',cursor:'pointer',display:'flex',alignItems:'center',gap:'0.5rem',marginBottom:'0.5rem'}}>
+                <span style={{fontSize:'1.5rem'}}>{p.emoji}</span>
+                <span style={{flex:1,textAlign:'left',fontSize:'0.85rem',fontWeight:'600'}}>{p.name}</span>
+                <span style={{background:'linear-gradient(135deg,#f59e0b,#f97316)',color:'white',padding:'0.3rem 0.6rem',borderRadius:'0.5rem',fontWeight:'bold',fontSize:'0.8rem'}}>
+                  CHF {Number(p.price).toFixed(2)}
+                </span>
+              </button>
+            ))}
           </div>
         )}
 
-        <p style={{textAlign:'center',color:'rgba(255,255,255,0.8)',marginTop:'1rem',fontSize:'0.75rem'}}>
-          🇨🇭 Schweiz · Sichere Zahlung via Stripe
+        <p style={{textAlign:'center',color:'rgba(255,255,255,0.8)',marginTop:'0.75rem',fontSize:'0.7rem'}}>
+          🇨🇭 Sichere Zahlung via Stripe
         </p>
       </div>
     </div>
